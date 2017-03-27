@@ -14,7 +14,6 @@
   },
   "homepage": "https://github.com/rohitmisra/public-transport#readme",
   "dependencies": {
-    "express": "^4.14.0",
     "html-table-to-json": "^0.2.0",
     "request-promise": "^4.2.0",
     "xml2js": "0.4.17"

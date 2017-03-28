@@ -86,7 +86,7 @@ var deptDEOptions = function(input, productsFilter, maxJourneys, date) {
 
 
 var stationINCallback = function(body, response, resolveWithFullResponse) {
-    resp = JSON.parse(body);
+    var resp = JSON.parse(body);
     if (resp.length > 0) {
         console.log("closest match: " + resp[0].name + ',' + resp[0].state_name + ' (' + resp[0].code + ')');
         return resp[0];
@@ -162,7 +162,7 @@ function parseTransportClasses(transportString) {
 }
 
 //getDepartures({ type: 'dbahn', station: 'hausener weg', products: 'u' });
-//getDepartures({ type: 'irctc', station: 'ndls', products: 'u, bus' });
+exports.departures({ type: 'irctc', station: 'ndls', products: 'u, bus' });
 //getDepartures('dbahn');
 //parseTransportClasses("ice, bus, s, str");
 //getStations();

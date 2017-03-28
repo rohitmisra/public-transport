@@ -1,16 +1,15 @@
 'use strict';
-
-module.exports = {
-    departures: function(options) {
-        return request(TransportClients[options.type].stationsOption(options.station)).then(function(id) {
-            console.log(id);
-            request(TransportClients[options.type].deptOption(id, parseTransportClasses(options.products))).then(function(transportObj) {
-                return console.log("Departures found!");
-                //console.log(transportObj);
-            });
+var exports = module.exports = {};
+exports.departures = function(options) {
+    return request(TransportClients[options.type].stationsOption(options.station)).then(function(id) {
+        console.log(id);
+        request(TransportClients[options.type].deptOption(id, parseTransportClasses(options.products))).then(function(transportObj) {
+            return console.log("Departures found!");
+            //console.log(transportObj);
         });
-    }
-}
+    });
+};
+
 
 
 var request = require('request-promise');

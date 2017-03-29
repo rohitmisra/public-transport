@@ -1,11 +1,9 @@
 'use strict';
 var exports = module.exports = {};
 exports.departures = function(options) {
-    return request(TransportClients[options.type].stationsOption(options.station)).then(function(id) {
-        console.log(id);
-        request(TransportClients[options.type].deptOption(id, parseTransportClasses(options.products))).then(function(transportObj) {
-            return console.log("Departures found!");
-            //console.log(transportObj);
+    return request(TransportClients[options.type].stationsOption(options.station)).then(function(stationObj) {
+        return request(TransportClients[options.type].deptOption(stationObj, options.products)).then(function(transportObj) {
+            return { station: stationObj, departures: transportObj };
         });
     });
 };
@@ -48,15 +46,14 @@ var meansOfTransport = Object.freeze({
 var stationDECallback = function(body, response, resolveWithFullResponse) {
     var response = iconv.decode(body, 'iso-8859-1');
     response = response.substring(8, response.length - 22);
-    console.log("Closest Match: " + JSON.parse(response).suggestions[0].value);
-    return JSON.parse(response).suggestions[0].extId
-        //getDepartures();
+    return { name: JSON.parse(response).suggestions[0].value, id: JSON.parse(response).suggestions[0].extId }
+    //getDepartures();
 };
-var stationDEOptions = function(input) {
+var stationDEOptions = function(station) {
     return {
         url: "http://www.img-bahn.de/bin/ajax-getstop.exe/dn",
         method: 'GET',
-        qs: { s: input },
+        qs: { s: station },
         encoding: null,
         transform: stationDECallback
     };
@@ -64,20 +61,28 @@ var stationDEOptions = function(input) {
 
 var deptDECallback = function(body, response, resolveWithFullResponse) {
     return promisesParser('<root>' + iconv.decode(body, 'iso-8859-1') + '</root>').then(function(result) {
-        result.root.Journey.forEach(function(val, idx) {
-            console.log(val.$.prod.split('#')[0].split('   ').join(' ') + " : " + val.$.targetLoc + " : " + val.$.fpTime + "(+" + val.$.approxDelay + ")");
-        });
-        return result.root.Journey;
+
+        var timeTableObjArr = function(entries) {
+            this.entries = entries;
+            this.prettyPrint = function() {
+                entries.forEach(function(val, idx) {
+                    console.log(val.$.prod.split('#')[0].split('   ').join(' ') + " : " + val.$.targetLoc + " : " + val.$.fpTime + "(+" + val.$.approxDelay + ")");
+                });
+            };
+        };
+        var timetableObj = new timeTableObjArr(result.root.Journey);
+        return timetableObj;
     }).catch(function(err) {
         //error here
     });
 };
 var deptDEOptions = function(input, productsFilter, maxJourneys, date) {
+    var products = parseTransportClasses(productsFilter);
     var d = new Date();
     date = date || (d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear().toString().substring(2));
     return {
         url: 'https://mobile.bahn.de/bin/mobil/bhftafel.exe/dn',
-        qs: { method: 'GET', input: input, productsFilter: productsFilter || '11111111111111', boardType: 'dep', disableEquivs: '1', maxJourneys: '10', time: 'now', date: date, clientType: 'ANDROID', L: 'vs_java3', hcount: '0', start: 'yes' },
+        qs: { method: 'GET', input: input, productsFilter: products || '11111111111111', boardType: 'dep', disableEquivs: '1', maxJourneys: '10', time: 'now', date: date, clientType: 'ANDROID', L: 'vs_java3', hcount: '0', start: 'yes' },
         encoding: null,
         transform: deptDECallback
     }
@@ -88,8 +93,8 @@ var deptDEOptions = function(input, productsFilter, maxJourneys, date) {
 var stationINCallback = function(body, response, resolveWithFullResponse) {
     var resp = JSON.parse(body);
     if (resp.length > 0) {
-        console.log("closest match: " + resp[0].name + ',' + resp[0].state_name + ' (' + resp[0].code + ')');
-        return resp[0];
+        //console.log("closest match: " + resp[0].name + ',' + resp[0].state_name + ' (' + resp[0].code + ')');
+        return { name: resp[0].name, id: resp[0].code, state: resp[0].state_name };
     } else {
         console.log("No match found for station");
     }
@@ -106,11 +111,29 @@ var stationINOptions = function(q) {
 }
 
 var deptINCallback = function(body, response, resolveWithFullResponse) {
+    //var timetableNew = JSON.parse(body).data.split(';');
     var timeTable = new HtmlTableToJson('<table>' + JSON.parse(body).data + '</table>').results[0];
+    var timeTableObj = function(trainname, arrival, departure, delay) {
+        this.trainname = trainname;
+        this.arrival = arrival;
+        this.departure = departure;
+        this.delay = delay;
+    }
+    var timeTableObjArr = function(entries) {
+        this.entries = entries;
+        this.prettyPrint = function() {
+            this.entries.forEach(function(val, idx) {
+                console.log(val.trainname + " Arrives: " + val.arrival + " Departs: " + val.departure + " Delayed by: " + val.delay);
+            });
+        };
+
+    };
+    var entries = [];
     timeTable.forEach(function(val, idx) {
-        console.log(val[2] + " Arrives: " + val[5] + " Departs: " + val[6] + " Delayed by: " + val[8]);
+        entries.push(new timeTableObj(val[2], val[5], val[6], val[8]));
     });
-    return timeTable;
+    var timeTableEntries = new timeTableObjArr(entries);
+    return timeTableEntries;
 }
 var deptINOptions = function(stationObj) {
     return {
@@ -118,12 +141,13 @@ var deptINOptions = function(stationObj) {
         method: 'POST',
         qs: {
             q: "larrdep",
-            v: "2.9.4"
+            v: "2.10.1"
         },
         encoding: null,
         formData: {
             station: stationObj.name,
-            stn: stationObj.code
+            stn: stationObj.id,
+            stnqt: 'live'
         },
         headers: {
             'Referer': 'http://etrain.info/in?STATION=URL',
@@ -150,6 +174,8 @@ var TransportClients = {
 
 
 function parseTransportClasses(transportString) {
+    if (transportString === undefined || transportString == "")
+        return null;
     var transportMask = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     var transportStringArr = transportString.split(/[\s,]+/);
     transportStringArr.forEach(function(val, idx) {
@@ -161,8 +187,13 @@ function parseTransportClasses(transportString) {
     return transportMask.join('');
 }
 
-//getDepartures({ type: 'dbahn', station: 'hausener weg', products: 'u' });
-exports.departures({ type: 'irctc', station: 'ndls', products: 'u, bus' });
+//var p = exports.departures({ type: 'dbahn', station: 'hausener weg', products: 'u' });
+/*var p = exports.departures({ type: 'irctc', station: 'bhubaneswar', products: 'u, bus' });
+p.then(function(value) {
+    console.log("Closest Match: " + value.station.name);
+    value.departures.prettyPrint();
+});*/
+
 //getDepartures('dbahn');
 //parseTransportClasses("ice, bus, s, str");
 //getStations();

@@ -31,9 +31,14 @@ p.then(function(value) {
 - For Germany
 
 `var p = publictransport.departures({ type: 'dbahn', station: 'hausener weg', products: 'u' });`
-- 'product' - product filter
+
+
+'product' - product filter
+
+
 
 - For India
+
 `var p = publictransport.departures({ type: 'irctc', station: 'bhubaneswar'});`
 
 departures method returns a Promise which returns a timetable object on completion.

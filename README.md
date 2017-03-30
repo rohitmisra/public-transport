@@ -1,5 +1,9 @@
 # Public Transport
 
+
+[![NPM](https://nodei.co/npm/public-transport.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/public-transport/)[![NPM](https://nodei.co/npm-dl/public-transport.png?months=1&height=3)](https://nodei.co/npm/public-transport/)
+
+
 A Node.js wrapper for fetching live departures of popular public transport providers/utilities across the world.
 
 ## Installation

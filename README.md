@@ -16,7 +16,7 @@ Require the public-transport module in your project
 ```
 var timetable = require('public-transport');
 
-var p = publictransport.departures(options);
+var p = timetable.departures(options);
 
 p.then(function(value) {
     console.log("Closest Match: " + value.station.name);

@@ -1,6 +1,6 @@
 {
   "name": "public-transport",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "public transport functions",
   "main": "index.js",
   "repository": {

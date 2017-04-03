@@ -1,23 +1,24 @@
 {
-  "name": "public-transport",
-  "version": "1.0.9",
-  "description": "public transport functions",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rohitmisra/public-transport"
-  },
-  "author": "rohitmisra44",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/rohitmisra/public-transport/issues"
-  },
-  "homepage": "https://github.com/rohitmisra/public-transport#readme",
-  "dependencies": {
-    "html-table-to-json": "^0.2.0",
-    "iconv-lite": "^0.4.15",
-    "request": "^2.81.0",
-    "request-promise": "^4.2.0",
-    "xml2js": "0.4.17"
-  }
+    "name": "public-transport",
+    "version": "1.0.10",
+    "description": "public transport functions",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rohitmisra/public-transport"
+    },
+    "author": "rohitmisra44",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/rohitmisra/public-transport/issues"
+    },
+    "homepage": "https://github.com/rohitmisra/public-transport#readme",
+    "dependencies": {
+        "html-table-to-json": "^0.2.0",
+        "iconv-lite": "^0.4.15",
+        "request": "^2.81.0",
+        "request-promise": "^4.2.0",
+        "rewire": "^2.5.2",
+        "xml2js": "0.4.17"
+    }
 }

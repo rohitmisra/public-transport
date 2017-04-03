@@ -66,7 +66,8 @@ var deptDECallback = function(body, response, resolveWithFullResponse) {
             this.entries = entries;
             this.prettyPrint = function() {
                 entries.forEach(function(val, idx) {
-                    console.log(val.$.prod.split('#')[0].split('   ').join(' ') + " : " + val.$.targetLoc + " : " + val.$.fpTime + "(+" + val.$.approxDelay + ")");
+                    console.log(val.$.prod.split('#')[0].split('   ').join(' ') + " | " + val.$.targetLoc + " | " + "Platform: " +
+                        ((val.$.platform) ? (val.$.platform) : "-") + " | " + val.$.fpTime + ((val.$.e_delay) ? ("(+" + (val.$.e_delay) + val.$.delayReason + ")") : ""));
                 });
             };
         };
@@ -187,8 +188,11 @@ function parseTransportClasses(transportString) {
     return transportMask.join('');
 }
 
-//var p = exports.departures({ type: 'dbahn', station: 'hausener weg', products: 'u' });
-/*var p = exports.departures({ type: 'irctc', station: 'bhubaneswar', products: 'u, bus' });
+//stationDECallback('SLs.sls={"suggestions":[{"value":"Reifenberger Straße/Sozialzentrum, Frankfurt am Ma","id":"A=1@O=Reifenberger Straße/Sozialzentrum, Frankfurt am Ma@X=8615423@Y=50128391@U=80@L=000101242@B=1@p=1490306597@","extId":"000101242","type":"1","typeStr":"[Bhf/Hst]","xcoord":"8615423","ycoord":"50128391","state":"id","prodClass":"32","weight":"1008"},{"value":"Frankfurt - Praunheim, Reifenberger Straße 73","id":"A=2@O=Frankfurt - Praunheim, Reifenberger Straße 73@X=8608223@Y=50133416@U=103@L=980385183@B=1@p=1378873973@","extId":"980385183","type":"2","typeStr":"[Adr]","xcoord":"8608223","ycoord":"50133416","state":"id","prodClass":"0","weight":"0"},{"value":"Frankfurt - Praunheim, Reifenberger Straße 75","id":"A=2@O=Frankfurt - Praunheim, Reifenberger Straße 75@X=8607657@Y=50133991@U=103@L=980385183@B=1@p=1378873973@","extId":"980385183","type":"2","typeStr":"[Adr]","xcoord":"8607657","ycoord":"50133991","state":"id","prodClass":"0","weight":"0"},{"value":"Frankfurt - Rödelheim, Reifenberger Straße 10","id":"A=2@O=Frankfurt - Rödelheim, Reifenberger Straße 10@X=8616170@Y=50128427@U=103@L=980385418@B=1@p=1378873973@","extId":"980385418","type":"2","typeStr":"[Adr]","xcoord":"8616170","ycoord":"50128427","state":"id","prodClass":"0","weight":"0"},{"value":"Frankfurt - Rödelheim, Reifenberger Straße 11-13","id":"A=2@O=Frankfurt - Rödelheim, Reifenberger Straße 11-13@X=8616170@Y=50128427@U=103@L=980385418@B=1@p=1378873973@","extId":"980385418","type":"2","typeStr":"[Adr]","xcoord":"8616170","ycoord":"50128427","state":"id","prodClass":"0","weight":"0"},{"value":"Frankfurt - Rödelheim, Reifenberger Straße 21-39","id":"A=2@O=Frankfurt - Rödelheim, Reifenberger Straße 21-39@X=8614399@Y=50129155@U=103@L=980385418@B=1@p=1378873973@","extId":"980385418","type":"2","typeStr":"[Adr]","xcoord":"8614399","ycoord":"50129155","state":"id","prodClass":"0","weight":"0"},{"value":"Frankfurt - Rödelheim, Reifenberger Straße 22-28","id":"A=2@O=Frankfurt - Rödelheim, Reifenberger Straße 22-28@X=8615253@Y=50128786@U=103@L=980385418@B=1@p=1378873973@","extId":"980385418","type":"2","typeStr":"[Adr]","xcoord":"8615253","ycoord":"50128786","state":"id","prodClass":"0","weight":"0"},{"value":"Frankfurt - Rödelheim, Reifenberger Straße 40-51","id":"A=2@O=Frankfurt - Rödelheim, Reifenberger Straße 40-51@X=8613275@Y=50129676@U=103@L=980385418@B=1@p=1378873973@","extId":"980385418","type":"2","typeStr":"[Adr]","xcoord":"8613275","ycoord":"50129676","state":"id","prodClass":"0","weight":"0"},{"value":"Frankfurt - Rödelheim, Reifenberger Straße 57-61","id":"A=2@O=Frankfurt - Rödelheim, Reifenberger Straße 57-61@X=8612124@Y=50130315@U=103@L=980385418@B=1@p=1378873973@","extId":"980385418","type":"2","typeStr":"[Adr]","xcoord":"8612124","ycoord":"50130315","state":"id","prodClass":"0","weight":"0"}]};SLs.showSuggestion();')
+
+
+/*var p = exports.departures({ type: 'dbahn', station: 'frankfurt hbf', products: '' });
+//var p = exports.departures({ type: 'irctc', station: 'bhubaneswar', products: 'u, bus' });
 p.then(function(value) {
     console.log("Closest Match: " + value.station.name);
     value.departures.prettyPrint();

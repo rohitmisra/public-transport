@@ -138,10 +138,10 @@ var deptINCallback = function(body, response, resolveWithFullResponse) {
 }
 var deptINOptions = function(stationObj) {
     return {
-        url: "http://etrain.info/ajax.php",
+        url: "https://etrain.info/ajax.php",
         method: 'POST',
         qs: {
-            q: "larrdep",
+            q: "adatstn",
             v: "2.10.1"
         },
         encoding: null,
@@ -149,10 +149,6 @@ var deptINOptions = function(stationObj) {
             station: stationObj.name,
             stn: stationObj.id,
             stnqt: 'live'
-        },
-        headers: {
-            'Referer': 'http://etrain.info/in?STATION=URL',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
         },
         transform: deptINCallback
     };

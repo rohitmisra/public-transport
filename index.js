@@ -141,7 +141,7 @@ var deptINOptions = function(stationObj) {
         url: "https://etrain.info/ajax.php",
         method: 'POST',
         qs: {
-            q: "adatstn",
+            q: "larrdep",
             v: "2.10.1"
         },
         encoding: null,

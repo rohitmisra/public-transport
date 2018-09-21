@@ -3,3 +3,11 @@ node_js:
   - stable
 install:
   - npm install
+addons:
+  sonarcloud:
+    organization: "rohitmisra-github" # the key of the org you chose at step #3
+    token:
+      secure: 460cf76e6686d1c82f841a49bb56a1b05be047b9 # encrypted value of your token
+script:
+  # other script steps might be done before running the actual analysis
+  - sonar-scanner
